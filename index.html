@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f6fa; }
+    header { background: #2c3e50; color: #fff; padding: 15px; text-align: center; }
+    nav { width: 200px; background: #34495e; height: 100vh; float: left; color: #fff; }
+    nav ul { list-style: none; padding: 0; margin: 0; }
+    nav ul li { padding: 15px; border-bottom: 1px solid #2c3e50; cursor: pointer; }
+    nav ul li:hover { background: #2c3e50; }
+    main { margin-left: 200px; padding: 20px; }
+    .card { background: white; padding: 20px; margin: 10px 0; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1);}
+    .stats { display: flex; gap: 20px; flex-wrap: wrap; }
+    .stats .card { flex: 1; text-align: center; }
+
+    /* Chart Box */
+    .chartBox { background: white; padding: 20px; border-radius: 5px; margin-top: 20px; box-shadow: 0 0 5px rgba(0,0,0,0.1);}
+    canvas { width: 100% !important; height: 250px !important; }
+
+    /* Buttons */
+    .btnBox { margin-top: 15px; text-align: center; }
+    .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; font-weight: bold; }
+    .up { background: #27ae60; color: white; }
+    .down { background: #c0392b; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Panel</h1>
+  </header>
+  <nav>
+    <ul>
+      <li>Dashboard</li>
+      <li>Users</li>
+      <li>Transactions</li>
+      <li>Settings</li>
+    </ul>
+  </nav>
+  <main>
+    <h2>Dashboard</h2>
+    <div class="stats">
+      <div class="card">
+        <h3>Users</h3>
+        <p>120</p>
+      </div>
+      <div class="card">
+        <h3>Total Deposits</h3>
+        <p>$50,000</p>
+      </div>
+      <div class="card">
+        <h3>Total Withdrawals</h3>
+        <p>$30,000</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Trading Volume</h3>
+      <p>$120,000</p>
+    </div>
+
+    <!-- 📉📈 Market Chart -->
+    <div class="chartBox">
+      <h3>Market Trend Control</h3>
+      <canvas id="adminChart"></canvas>
+      <div class="btnBox">
+        <button class="btn up" onclick="moveUp()">📈 Up</button>
+        <button class="btn down" onclick="moveDown()">📉 Down</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 📉📈 Chart.js Setup
+    const ctx = document.getElementById('adminChart').getContext('2d');
+    let chartData = [100,102,98,105,103,107,110,108,115,113,117,114,120,118,122,125];
+
+    const adminChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: chartData.length}, (_, i) => i+1),
+        datasets: [{
+          label: 'BTC Market',
+          data: chartData,
+          borderColor: "green",
+          segment: {
+            borderColor: ctx => ctx.p1.parsed.y > ctx.p0.parsed.y ? 'green' : 'red'
+          },
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } }
+      }
+    });
+
+    // 📈 Button Functions
+    function moveUp() {
+      const last = chartData[chartData.length - 1];
+      const newPoint = last + Math.floor(Math.random() * 5 + 1);
+      chartData.shift();
+      chartData.push(newPoint);
+      adminChart.update();
+    }
+
+    // 📉 Button Functions
+    function moveDown() {
+      const last = chartData[chartData.length - 1];
+      const newPoint = last - Math.floor(Math.random() * 5 + 1);
+      chartData.shift();
+      chartData.push(newPoint);
+      adminChart.update();
+    }
+  </script>
+</body>
+</html>
